@@ -2,25 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Personas;
-use App\Models\Imagenes;
+use Illuminate\Database\Eloquent\Model;
 
-class agenda extends Model
+class Agenda extends Model
 {
     use HasFactory;
-    
-    protected $fillable = ['id ','fecha', 'hora', 'idpersona', 'idimagen'];
 
-    public function persona()
-    {
-        return $this->belongsTo(Personas::class);
-    }
+    protected $table = 'agenda'; // Nombre de la tabla en la BD
+    protected $primaryKey = 'id'; // Clave primaria
+    public $timestamps = false; // Si tu tabla no usa created_at y updated_at
 
-    public function imagen()
-    {
-        return $this->belongsTo(Imagenes::class);
-    }
+    protected $fillable = ['fecha', 'hora', 'idpersona', 'idimagen'];
 }
-
