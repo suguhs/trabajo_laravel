@@ -2,29 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Imagenes;
-use App\Models\agenda;
+use App\Models\Agenda;
+use App\Models\Persona;
+use App\Models\Imagen;
 
 class AgendaController extends Controller
 {
-    public function index()
+    public function create()
     {
-        return response()->json(agenda::with(['persona', 'imagen'])->get());
+        $personas = Persona::all();
+        $imagenes = Imagen::all();
+        return view('agenda.create', compact('personas', 'imagenes'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'fecha' => 'required|date',
-            'hora' => 'required',
-            'idpersona' => 'required|exists:personas,id',
-            'idimagen' => 'required|exists:imagenes,id',
-        ]);
+        $agenda = new Agenda();
+        $agenda->fecha = $request->fecha;
+        $agenda->hora = $request->hora;
+        $agenda->idpersona = $request->persona;
+        $agenda->idimagen = $request->imagen;
+        $agenda->save();
+        return redirect('/agenda');
+    }
 
-        agenda::create($request->all());
+    public function show(Request $request)
+    {
+        $personas = Persona::all();
+        $agenda = [];
 
-        return response()->json(['message' => 'Entrada añadida con éxito']);
+        if ($request->has('persona') && $request->has('fecha')) {
+            $agenda = Agenda::select('imagenes.imagen', 'agenda.fecha', 'agenda.hora')
+                ->join('imagenes', 'imagenes.idimagen', '=', 'agenda.idimagen')
+                ->where('agenda.idpersona', $request->persona)
+                ->where('agenda.fecha', $request->fecha)
+                ->get();
+        }
+
+        return view('agenda.index', compact('personas', 'agenda'));
     }
 }

@@ -8,10 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Agenda extends Model
 {
     use HasFactory;
-
-    protected $table = 'agenda'; // Nombre de la tabla en la BD
-    protected $primaryKey = 'id'; // Clave primaria
-    public $timestamps = false; // Si tu tabla no usa created_at y updated_at
-
+    protected $table = 'agenda';
     protected $fillable = ['fecha', 'hora', 'idpersona', 'idimagen'];
+
+    public function persona()
+    {
+        return $this->belongsTo(Persona::class, 'idpersona');
+    }
+
+    public function imagen()
+    {
+        return $this->belongsTo(Imagen::class, 'idimagen');
+    }
 }
